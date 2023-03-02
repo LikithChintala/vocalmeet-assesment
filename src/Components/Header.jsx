@@ -8,12 +8,11 @@ import {
   Button,
   MenuItem,
   IconButton,
+  Container,
 } from "@mui/material";
 
 import MenuIcon from "@mui/icons-material/Menu";
 import { Link, useNavigate } from "react-router-dom";
-
-import { Container } from "@mui/system";
 
 const pages = ["Home", "TODOs", "Code Validator", "Crypto", "Form Validator"];
 
@@ -74,7 +73,7 @@ const Header = (props) => {
                 vertical: "top",
                 horizontal: "left",
               }}
-              open={anchorElNav}
+              open={Boolean(anchorElNav)}
               onClose={handleCloseNavMenu}
               sx={{
                 display: { xs: "block", md: "none" },

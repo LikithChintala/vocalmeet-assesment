@@ -33,10 +33,63 @@ export const FormValidator = () => {
 
   const handleInputChange = (event) => {
     const { name, value, checked } = event.target;
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [name]: name === "acceptCondition" ? checked : value,
-    }));
+
+    if (name === "phone") {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: value.replace(/[^\d]/g, ""),
+      }));
+      let phoneNumber = value.replace(/[^\d]/g, "");
+      const phoneNumberLength = phoneNumber.length;
+      if (phoneNumberLength < 4) {
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          [name]: phoneNumber,
+        }));
+      }
+      if (phoneNumberLength < 7) {
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          [name]: `(${phoneNumber.substring(0, 3)}) ${phoneNumber.substring(
+            3,
+            6
+          )}`,
+        }));
+      } else {
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          [name]: `(${phoneNumber.substring(0, 3)}) ${phoneNumber.substring(
+            3,
+            6
+          )}-${phoneNumber.substring(6, phoneNumber.length)}`,
+        }));
+      }
+    } else if (name === "postcode") {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: value.replaceAll(" ", "").toUpperCase(),
+      }));
+      let postCode = value.replaceAll(" ", "");
+      const postCodeLength = value.length;
+      if (postCodeLength < 4) {
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          [name]: postCode.toUpperCase(),
+        }));
+      } else {
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          [name]: `${postCode.substring(0, 3).toUpperCase()} ${postCode
+            .substring(3, postCode.length)
+            .toUpperCase()}`,
+        }));
+      }
+    } else {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: name === "acceptCondition" ? checked : value,
+      }));
+    }
   };
 
   const validateForm = () => {
@@ -54,7 +107,7 @@ export const FormValidator = () => {
     ) {
       newErrors.email = "Invalid email address";
     }
-    if (formData.phone.trim() === "") {
+    if (formData.phone.replace(/[^\d]/g, "").trim() === "") {
       newErrors.phone = "Please enter your phone number";
     } else if (!/^\(\d{3}\) \d{3}-\d{4}$/.test(formData.phone)) {
       newErrors.phone =
@@ -65,7 +118,7 @@ export const FormValidator = () => {
     } else if (formData.age < 16 || formData.age > 65) {
       newErrors.age = "Your age must be between 16 and 65";
     }
-    if (formData.postcode.trim() === "") {
+    if (formData.postcode.replace(" ", "").trim() === "") {
       newErrors.postcode = "Please enter your postcode";
     } else if (!/^[A-Za-z]\d[A-Za-z] \d[A-Za-z]\d$/.test(formData.postcode)) {
       newErrors.postcode = "Invalid postcode. Please use the format X0X 0X0";
@@ -350,7 +403,6 @@ export const FormValidator = () => {
               multiline
               rows={4}
               fullWidth
-              defaultValue=""
               variant="standard"
               name="description"
               value={formData.description}
@@ -380,7 +432,6 @@ export const FormValidator = () => {
                     onChange={handleInputChange}
                     name="acceptCondition"
                     color="primary"
-                    err
                     // required
                   />
                 }
